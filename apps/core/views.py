@@ -7,19 +7,26 @@ from .services import create_custom_table, drop_custom_table
 @login_required
 def dashboard(request):
     """
-    Show the company dashboard: items, employees, expenses, etc.
+    Show the company dashboard: items, employees, expenses, materials, operational expenses.
     """
     company_id = request.user.company_id  # Each user belongs to a company
     schema_name = f"company_{company_id}"
 
-    dashboard_data = {}
+    # Initialize dashboard data dictionary
+    dashboard_data = {
+        "items": [],
+        "employees": [],
+        "expenses": [],
+        "materials": [],
+        "operations": [],
+    }
 
     try:
         with connection.cursor() as cursor:
             cursor.execute(f"USE {schema_name};")
 
             # Fetch dashboard items
-            cursor.execute("SELECT * FROM Dashboard;")
+            cursor.execute("SELECT * FROM ItemData;")
             dashboard_data['items'] = cursor.fetchall()
 
             # Fetch employees
@@ -37,6 +44,7 @@ def dashboard(request):
             # Fetch operational expenses
             cursor.execute("SELECT * FROM OperationalExp;")
             dashboard_data['operations'] = cursor.fetchall()
+
     except Exception as e:
         messages.error(request, f"Error fetching dashboard data: {e}")
 
