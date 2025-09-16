@@ -1,28 +1,39 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}User Dashboard{% endblock %}
+
 {% block content %}
-<h1>{{ company.name }} Dashboard</h1>
+<div class="container mt-5">
+    <h2>Welcome, {{ request.user.username }}!</h2>
+    <p>This is your user dashboard.</p>
 
-<h2>Items</h2>
-<table border="1">
-<tr><th>Name</th><th>Total Quantity</th><th>Selling Price</th></tr>
-{% for item in items %}
-<tr>
-<td>{{ item.name }}</td>
-<td>{{ item.total_quantity }}</td>
-<td>{{ item.selling_price }}</td>
-</tr>
-{% endfor %}
-</table>
-
-<h2>Expenses</h2>
-<table border="1">
-<tr><th>Date</th><th>Type</th><th>Total</th></tr>
-{% for exp in expenses %}
-<tr>
-<td>{{ exp.date }}</td>
-<td>{{ exp.type_id }}</td>
-<td>{{ exp.total }}</td>
-</tr>
-{% endfor %}
-</table>
+    <!-- Quick stats example -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Companies Managed</h5>
+                    <p class="card-text">{{ company_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Active Subscriptions</h5>
+                    <p class="card-text">{{ active_subscriptions }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-dark mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Pending Payments</h5>
+                    <p class="card-text">{{ pending_payments }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
