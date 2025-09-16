@@ -45,9 +45,9 @@
         </div>
     </div>
 
-    <!-- Tables -->
+    <!-- Items Table -->
     <h4 class="mt-4">Company Items</h4>
-    <table class="table table-striped">
+    <table class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th>Item ID</th>
@@ -75,5 +75,120 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Employees Table -->
+    <h4 class="mt-5">Employees</h4>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Address</th>
+                <th>Phone</th>
+                <th>Salary</th>
+                <th>Post</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in employees %}
+            <tr>
+                <td>{{ emp.Emp_id }}</td>
+                <td>{{ emp.Name }}</td>
+                <td>{{ emp.Age }}</td>
+                <td>{{ emp.Address }}</td>
+                <td>{{ emp.Phone }}</td>
+                <td>{{ emp.Salary }}</td>
+                <td>{{ emp.Post }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No employees found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Expenses Table -->
+    <h4 class="mt-5">Expenses</h4>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Type ID</th>
+                <th>Item ID</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for exp in expenses %}
+            <tr>
+                <td>{{ exp.id }}</td>
+                <td>{{ exp.Date }}</td>
+                <td>{{ exp.Type_id }}</td>
+                <td>{{ exp.Item_id }}</td>
+                <td>{{ exp.Total }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No expenses found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Materials Expenses Table -->
+    <h4 class="mt-5">Materials Expenses</h4>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Type ID</th>
+                <th>Date</th>
+                <th>Cost</th>
+                <th>Item ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mat in materials %}
+            <tr>
+                <td>{{ mat.Type_id }}</td>
+                <td>{{ mat.Date }}</td>
+                <td>{{ mat.Cost }}</td>
+                <td>{{ mat.Item_id }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">No materials expenses found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Operational Expenses Table -->
+    <h4 class="mt-5">Operational Expenses</h4>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Type ID</th>
+                <th>Date</th>
+                <th>Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for op in operations %}
+            <tr>
+                <td>{{ op.Type_id }}</td>
+                <td>{{ op.Date }}</td>
+                <td>{{ op.Cost }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No operational expenses found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 </div>
 {% endblock %}
