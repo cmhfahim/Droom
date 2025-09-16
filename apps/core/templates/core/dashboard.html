@@ -1,1 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ company.name }} Dashboard</h1>
+
+<h2>Items</h2>
+<table border="1">
+<tr><th>Name</th><th>Total Quantity</th><th>Selling Price</th></tr>
+{% for item in items %}
+<tr>
+<td>{{ item.name }}</td>
+<td>{{ item.total_quantity }}</td>
+<td>{{ item.selling_price }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<h2>Expenses</h2>
+<table border="1">
+<tr><th>Date</th><th>Type</th><th>Total</th></tr>
+{% for exp in expenses %}
+<tr>
+<td>{{ exp.date }}</td>
+<td>{{ exp.type_id }}</td>
+<td>{{ exp.total }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
 
