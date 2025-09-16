@@ -115,8 +115,10 @@ USE_TZ = True
 # -------------------------
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"   # <-- Add this for deployment
+
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = BASE_DIR / "mediafiles"     # <-- Add this for deployment
 
 # -------------------------
 # Default Auto Field
