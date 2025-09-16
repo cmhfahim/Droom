@@ -1,24 +1,32 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
-<h2>Manage Custom Tables</h2>
+<div class="container mt-5">
+    <h2>Manage Custom Tables</h2>
 
-<form method="POST">
-    {% csrf_token %}
-    <label for="table_name">Table Name:</label>
-    <input type="text" name="table_name" required>
+    <form method="POST" class="mb-4">
+        {% csrf_token %}
+        <div class="mb-2">
+            <label for="table_name">Table Name:</label>
+            <input type="text" name="table_name" id="table_name" required class="form-control">
+        </div>
 
-    <label for="attributes">Attributes (col:TYPE, ...):</label>
-    <input type="text" name="attributes" placeholder="name:VARCHAR(50),age:INT" required>
+        <div class="mb-2">
+            <label for="attributes">Attributes (col:TYPE, ...):</label>
+            <input type="text" name="attributes" id="attributes" placeholder="name:VARCHAR(50),age:INT" required class="form-control">
+        </div>
 
-    <button type="submit" name="action" value="create">Create Table</button>
-    <button type="submit" name="action" value="delete">Delete Table</button>
-</form>
+        <button type="submit" name="action" value="create" class="btn btn-success">Create Table</button>
+        <button type="submit" name="action" value="delete" class="btn btn-danger">Delete Table</button>
+    </form>
 
-{% if messages %}
-    <ul>
+    {% if messages %}
+    <ul class="list-group">
         {% for message in messages %}
-            <li>{{ message }}</li>
+            <li class="list-group-item {% if message.tags %}list-group-item-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </li>
         {% endfor %}
     </ul>
-{% endif %}
+    {% endif %}
+</div>
 {% endblock %}
