@@ -1,17 +1,31 @@
-from django.shortcuts import render
-from django.db import connection
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .services import create_custom_table, drop_custom_table
 
-@login_required
-def dashboard(request):
-    company_id = request.user.id  # or however you link user to company
+def manage_tables(request):
+    company_id = request.session.get("company_id")
+    if not company_id:
+        return redirect("company_login")
 
-    schema_name = f"company_{company_id}"
+    if request.method == "POST":
+        action = request.POST.get("action")
+        table_name = request.POST.get("table_name")
+        attributes_raw = request.POST.get("attributes")  # Expect format: col1:TYPE,col2:TYPE
 
-    with connection.cursor() as cursor:
-        cursor.execute(f"USE {schema_name};")
-        # Example: fetch all items for dashboard
-        cursor.execute("SELECT * FROM Dashboard;")
-        dashboard_items = cursor.fetchall()
+        # Convert string to dictionary
+        try:
+            attributes = dict(attr.split(":") for attr in attributes_raw.split(","))
+        except Exception as e:
+            messages.error(request, f"Invalid attributes format. Example: name:VARCHAR(50),age:INT")
+            return redirect("manage_tables")
 
-    return render(request, 'core/dashboard.html', {'dashboard_items': dashboard_items})
+        if action == "create":
+            create_custom_table(company_id, table_name, attributes)
+            messages.success(request, f"Table '{table_name}' created successfully!")
+        elif action == "delete":
+            drop_custom_table(company_id, table_name)
+            messages.success(request, f"Table '{table_name}' deleted successfully!")
+
+        return redirect("manage_tables")
+
+    return render(request, "core/table_manager.html")
