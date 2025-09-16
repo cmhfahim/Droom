@@ -1,13 +1,16 @@
-{% extends 'base.html' %}
-{% block content %}
-<h1>Welcome to Droom</h1>
-<p>Register or Login to access your company dashboard.</p>
-<a href="{% url 'register' %}">Register</a> | <a href="{% url 'login' %}">Login</a>
+{% extends "base.html" %}
+{% load static %}
 
-<h2>Existing Companies:</h2>
-<ul>
-{% for company in companies %}
-    <li>{{ company.name }} (Registered on {{ company.reg_date }})</li>
-{% endfor %}
-</ul>
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="display-4">Welcome to Droom</h1>
+    <p class="lead">Manage your company efficiently with our system.</p>
+    
+    <div class="mt-4">
+        <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg me-2">Register</a>
+        <a href="{% url 'users:login' %}" class="btn btn-secondary btn-lg">Login</a>
+    </div>
+</div>
 {% endblock %}
