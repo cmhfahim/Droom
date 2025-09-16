@@ -1,29 +1,79 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
 {% block content %}
-<h1>{{ company.name }} Dashboard</h1>
+<div class="container mt-5">
+    <h2 class="mb-4">Company Dashboard</h2>
+    
+    <p>Welcome, {{ request.user.username }}!</p>
 
-<h2>Items</h2>
-<table border="1">
-<tr><th>Name</th><th>Total Quantity</th><th>Selling Price</th></tr>
-{% for item in items %}
-<tr>
-<td>{{ item.name }}</td>
-<td>{{ item.total_quantity }}</td>
-<td>{{ item.selling_price }}</td>
-</tr>
-{% endfor %}
-</table>
+    <!-- Summary cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Employees</h5>
+                    <p class="card-text">{{ employee_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Sales</h5>
+                    <p class="card-text">{{ total_sales }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Expenses</h5>
+                    <p class="card-text">{{ total_expenses }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Remaining Items</h5>
+                    <p class="card-text">{{ remaining_items }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<h2>Expenses</h2>
-<table border="1">
-<tr><th>Date</th><th>Type</th><th>Total</th></tr>
-{% for exp in expenses %}
-<tr>
-<td>{{ exp.date }}</td>
-<td>{{ exp.type_id }}</td>
-<td>{{ exp.total }}</td>
-</tr>
-{% endfor %}
-</table>
+    <!-- Tables -->
+    <h4 class="mt-4">Company Items</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Item ID</th>
+                <th>Buying Price</th>
+                <th>Selling Price</th>
+                <th>Total Quantity</th>
+                <th>Total Cost</th>
+                <th>Remain</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.Item_id }}</td>
+                <td>{{ item.Buying_price }}</td>
+                <td>{{ item.Selling_price }}</td>
+                <td>{{ item.Total_quantity }}</td>
+                <td>{{ item.Total_cost }}</td>
+                <td>{{ item.Remain }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No items found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
-
