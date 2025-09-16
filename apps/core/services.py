@@ -1,25 +1,19 @@
 from django.db import connection
 
-
-def create_customer_company_db(company_id: int):
+def create_customer_company_tables(company_id: int):
     """
-    Creates the required schema/tables for a newly registered company.
-    Each company gets its own schema (database) with predefined tables.
+    Create the required tables for a newly registered company.
+    All table names are prefixed with company_id to separate companies.
     """
-    schema_name = f"company_{company_id}"
+    prefix = f"company_{company_id}_"
 
     with connection.cursor() as cursor:
-        # Create schema
-        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {schema_name};")
-        cursor.execute(f"USE {schema_name};")
-
         # -------------------------
-        # Core system tables
+        # Core company tables (prefixed)
         # -------------------------
 
-        # CompanyData Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS CompanyData (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}CompanyData (
             Company_id INT AUTO_INCREMENT PRIMARY KEY,
             Name VARCHAR(255),
             Real_business INT,
@@ -33,9 +27,8 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # SubscriptionPlan Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS SubscriptionPlan (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}SubscriptionPlan (
             Sub_plan_id INT AUTO_INCREMENT PRIMARY KEY,
             Type VARCHAR(50),
             Name VARCHAR(100),
@@ -43,17 +36,15 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # BusinessType Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS BusinessType (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}BusinessType (
             Real_business INT AUTO_INCREMENT PRIMARY KEY,
             Type VARCHAR(50)
         );
         """)
 
-        # AdminStuff Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS AdminStuff (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}AdminStuff (
             S_id INT AUTO_INCREMENT PRIMARY KEY,
             Name VARCHAR(100),
             Age INT,
@@ -66,17 +57,15 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # AdminType Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS AdminType (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}AdminType (
             Post VARCHAR(50) PRIMARY KEY,
             Type_s VARCHAR(50)
         );
         """)
 
-        # PaymentHistory Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS PaymentHistory (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}PaymentHistory (
             Company_id INT,
             Date DATE,
             Method VARCHAR(50),
@@ -84,9 +73,8 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # CompanyLogin Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS CompanyLogin (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}CompanyLogin (
             com_pass VARCHAR(255) PRIMARY KEY,
             Company_id INT,
             Password VARCHAR(255)
@@ -94,12 +82,11 @@ def create_customer_company_db(company_id: int):
         """)
 
         # -------------------------
-        # Customer company tables
+        # Customer company tables (prefixed)
         # -------------------------
 
-        # Company Payment Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS CompanyPayment (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}CompanyPayment (
             id INT AUTO_INCREMENT PRIMARY KEY,
             Company_id INT NOT NULL,
             Last_pay_date DATE,
@@ -109,9 +96,8 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # Company Employee Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS CompanyEmployee (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}CompanyEmployee (
             Emp_id INT AUTO_INCREMENT PRIMARY KEY,
             Company_id INT NOT NULL,
             Name VARCHAR(100),
@@ -124,9 +110,8 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # Expenses Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS Expenses (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}Expenses (
             id INT AUTO_INCREMENT PRIMARY KEY,
             Company_id INT NOT NULL,
             Date DATE,
@@ -136,9 +121,8 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # Materials Expenses Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS MaterialsExp (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}MaterialsExp (
             Type_id INT AUTO_INCREMENT PRIMARY KEY,
             Company_id INT NOT NULL,
             Date DATE,
@@ -147,9 +131,8 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # Operational Expenses Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS OperationalExp (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}OperationalExp (
             Type_id INT AUTO_INCREMENT PRIMARY KEY,
             Company_id INT NOT NULL,
             Date DATE,
@@ -157,9 +140,8 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # Dashboard Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS Dashboard (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}Dashboard (
             id INT AUTO_INCREMENT PRIMARY KEY,
             Company_id INT NOT NULL,
             Item_id INT,
@@ -167,9 +149,8 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # Item Supervisor Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS ItemSupervisor (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}ItemSupervisor (
             id INT AUTO_INCREMENT PRIMARY KEY,
             Company_id INT NOT NULL,
             Item_id INT,
@@ -177,9 +158,8 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # Item Data Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS ItemData (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}ItemData (
             Item_id INT AUTO_INCREMENT PRIMARY KEY,
             Company_id INT NOT NULL,
             Buying_price DECIMAL(12,2),
@@ -190,9 +170,8 @@ def create_customer_company_db(company_id: int):
         );
         """)
 
-        # Company Login Time Table
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS CompanyLoginTime (
+        cursor.execute(f"""
+        CREATE TABLE IF NOT EXISTS {prefix}CompanyLoginTime (
             id INT AUTO_INCREMENT PRIMARY KEY,
             Company_id INT NOT NULL,
             Date DATE,
@@ -205,14 +184,13 @@ def create_customer_company_db(company_id: int):
 def create_custom_table(company_id: int, table_name: str, attributes: dict):
     """
     Dynamically create a custom table for a company.
-    attributes = { "column_name": "DATA_TYPE", "column2": "DATA_TYPE" }
+    Table name is prefixed with company_id.
     """
-    schema_name = f"company_{company_id}"
-
+    table_name_prefixed = f"company_{company_id}_{table_name}"
     columns = [f"{col} {dtype}" for col, dtype in attributes.items()]
     columns_sql = ", ".join(columns)
 
-    sql = f"CREATE TABLE IF NOT EXISTS {schema_name}.{table_name} ({columns_sql});"
+    sql = f"CREATE TABLE IF NOT EXISTS {table_name_prefixed} ({columns_sql});"
 
     with connection.cursor() as cursor:
         cursor.execute(sql)
@@ -220,10 +198,10 @@ def create_custom_table(company_id: int, table_name: str, attributes: dict):
 
 def drop_custom_table(company_id: int, table_name: str):
     """
-    Drop a custom table from a company's schema.
+    Drop a custom table from a company.
     """
-    schema_name = f"company_{company_id}"
-    sql = f"DROP TABLE IF EXISTS {schema_name}.{table_name};"
+    table_name_prefixed = f"company_{company_id}_{table_name}"
+    sql = f"DROP TABLE IF EXISTS {table_name_prefixed};"
 
     with connection.cursor() as cursor:
         cursor.execute(sql)
