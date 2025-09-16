@@ -3,9 +3,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('apps.core.urls')),
+    path('', include('apps.core.urls')),       # for landing and dashboard
     path('users/', include('apps.users.urls')),
     path('billing/', include('apps.billing.urls')),
     path('api/', include('apps.api.urls')),
 ]
-
