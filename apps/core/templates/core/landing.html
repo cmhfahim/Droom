@@ -1,1 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Welcome to Droom</h1>
+<p>Register or Login to access your company dashboard.</p>
+<a href="{% url 'register' %}">Register</a> | <a href="{% url 'login' %}">Login</a>
 
+<h2>Existing Companies:</h2>
+<ul>
+{% for company in companies %}
+    <li>{{ company.name }} (Registered on {{ company.reg_date }})</li>
+{% endfor %}
+</ul>
+{% endblock %}
