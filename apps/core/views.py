@@ -1,20 +1,17 @@
-from django.shortcuts import render, redirect
-from apps.users.models import UserCompany
+from django.shortcuts import render
+from django.db import connection
 from django.contrib.auth.decorators import login_required
-from .models import CompanyData, ItemData, Expenses, Dashboard
-
-def landing(request):
-    companies = CompanyData.objects.all()
-    return render(request, 'core/landing.html', {'companies': companies})
 
 @login_required
 def dashboard(request):
-    company = request.user.company
-    items = ItemData.objects.filter(company=company)
-    expenses = Expenses.objects.filter(company=company)
-    return render(request, 'core/dashboard.html', {
-        'company': company,
-        'items': items,
-        'expenses': expenses
-    })
+    company_id = request.user.id  # or however you link user to company
 
+    schema_name = f"company_{company_id}"
+
+    with connection.cursor() as cursor:
+        cursor.execute(f"USE {schema_name};")
+        # Example: fetch all items for dashboard
+        cursor.execute("SELECT * FROM Dashboard;")
+        dashboard_items = cursor.fetchall()
+
+    return render(request, 'core/dashboard.html', {'dashboard_items': dashboard_items})
