@@ -1,1 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">{{ request.user.company.name }} Billing Dashboard</h2>
+
+    {% if bills %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Payment Method</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills %}
+                        <tr>
+                            <td>{{ bill.date|date:"M d, Y" }}</td>
+                            <td>${{ bill.amount }}</td>
+                            <td>{{ bill.method }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            No billing records found.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
 
