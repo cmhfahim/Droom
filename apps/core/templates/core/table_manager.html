@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Manage Custom Tables</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    <label for="table_name">Table Name:</label>
+    <input type="text" name="table_name" required>
+
+    <label for="attributes">Attributes (col:TYPE, ...):</label>
+    <input type="text" name="attributes" placeholder="name:VARCHAR(50),age:INT" required>
+
+    <button type="submit" name="action" value="create">Create Table</button>
+    <button type="submit" name="action" value="delete">Delete Table</button>
+</form>
+
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}
