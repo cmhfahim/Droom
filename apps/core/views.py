@@ -1,63 +1,98 @@
+# core/views.py
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import connection
 from django.contrib.auth.decorators import login_required
-from .services import create_custom_table, drop_custom_table
 
+from .forms import CompanyRegistrationForm
+from .services import (
+    register_company_tables,
+    create_custom_table,
+    drop_custom_table
+)
+from .models import CompanyData
+
+
+# ---------------------------
+# Company Registration
+# ---------------------------
+def register_company_view(request):
+    """
+    Handles new company registration and auto-creates their prefixed tables.
+    """
+    if request.method == "POST":
+        form = CompanyRegistrationForm(request.POST)
+        if form.is_valid():
+            company = form.save()
+            # Create company-specific tables
+            register_company_tables(company.company_id)
+            messages.success(request, "Company registered successfully!")
+            return redirect("dashboard", company_id=company.company_id)
+    else:
+        form = CompanyRegistrationForm()
+
+    return render(request, "core/register_company.html", {"form": form})
+
+
+# ---------------------------
+# Dashboard
+# ---------------------------
 @login_required
-def dashboard(request):
+def dashboard(request, company_id=None):
     """
-    Show the company dashboard: items, employees, expenses, materials, operational expenses.
+    Shows company dashboard: employees, expenses, items, summary dashboard.
+    Supports both request.user.company_id (if logged in)
+    or company_id from URL.
     """
-    company_id = request.user.company_id  # Each user belongs to a company
-    schema_name = f"company_{company_id}"
+    if company_id is None:
+        company_id = getattr(request.user, "company_id", None)
 
-    # Initialize dashboard data dictionary
-    dashboard_data = {
-        "items": [],
+    if not company_id:
+        messages.error(request, "Company not identified. Please log in again.")
+        return redirect("company_login")
+
+    data = {
         "employees": [],
         "expenses": [],
-        "materials": [],
-        "operations": [],
+        "items": [],
+        "dashboard": [],
+        "company_id": company_id,
     }
 
     try:
         with connection.cursor() as cursor:
-            cursor.execute(f"USE {schema_name};")
+            # Employees
+            cursor.execute(f"SELECT * FROM company{company_id}_employee")
+            data["employees"] = cursor.fetchall()
 
-            # Fetch dashboard items
-            cursor.execute("SELECT * FROM ItemData;")
-            dashboard_data['items'] = cursor.fetchall()
+            # Expenses
+            cursor.execute(f"SELECT * FROM company{company_id}_expenses")
+            data["expenses"] = cursor.fetchall()
 
-            # Fetch employees
-            cursor.execute("SELECT * FROM CompanyEmployee;")
-            dashboard_data['employees'] = cursor.fetchall()
+            # Items
+            cursor.execute(f"SELECT * FROM company{company_id}_itemdata")
+            data["items"] = cursor.fetchall()
 
-            # Fetch expenses
-            cursor.execute("SELECT * FROM Expenses;")
-            dashboard_data['expenses'] = cursor.fetchall()
-
-            # Fetch materials
-            cursor.execute("SELECT * FROM MaterialsExp;")
-            dashboard_data['materials'] = cursor.fetchall()
-
-            # Fetch operational expenses
-            cursor.execute("SELECT * FROM OperationalExp;")
-            dashboard_data['operations'] = cursor.fetchall()
+            # Dashboard summary
+            cursor.execute(f"SELECT * FROM company{company_id}_dashboard")
+            data["dashboard"] = cursor.fetchall()
 
     except Exception as e:
         messages.error(request, f"Error fetching dashboard data: {e}")
 
-    return render(request, "core/dashboard.html", {"dashboard_data": dashboard_data})
+    return render(request, "core/dashboard.html", data)
 
 
+# ---------------------------
+# Dynamic Table Management
+# ---------------------------
 @login_required
 def manage_tables(request):
     """
-    Allow a company to dynamically create or delete tables in their database
-    without writing SQL code.
+    Allow a company to dynamically create or delete custom tables
+    in their database without writing SQL code.
     """
-    company_id = request.user.company_id
+    company_id = getattr(request.user, "company_id", None)
     if not company_id:
         messages.error(request, "Company not identified. Please log in again.")
         return redirect("company_login")
