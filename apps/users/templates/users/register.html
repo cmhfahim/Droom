@@ -1,11 +1,36 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>Register</h1>
-<form method="POST">{% csrf_token %}
-<input type="text" name="username" placeholder="Username" required><br>
-<input type="password" name="password" placeholder="Password" required><br>
-<input type="text" name="company_name" placeholder="Company Name" required><br>
-<button type="submit">Register</button>
+<h1>Register Company</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div>
+        {{ form.name.label_tag }} {{ form.name }}
+    </div>
+    <div>
+        {{ form.real_business.label_tag }} {{ form.real_business }}
+    </div>
+    <div>
+        {{ form.address.label_tag }} {{ form.address }}
+    </div>
+    <div>
+        {{ form.phone.label_tag }} {{ form.phone }}
+    </div>
+    <div>
+        {{ form.total_employees.label_tag }} {{ form.total_employees }}
+    </div>
+    <div>
+        {{ form.type.label_tag }} {{ form.type }}
+    </div>
+    <div>
+        {{ form.sub_plan.label_tag }} {{ form.sub_plan }}
+    </div>
+    <div>
+        {{ form.supervisor.label_tag }} {{ form.supervisor }}
+    </div>
+
+    <button type="submit">Register</button>
 </form>
 {% endblock %}
-
