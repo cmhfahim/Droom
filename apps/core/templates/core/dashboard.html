@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Company Dashboard - {{ request.user.company.name }}</h2>
+    <h2 class="mb-4">Company Dashboard - {{ company_id }}</h2>
     <p>Welcome, {{ request.user.username }}!</p>
 
     <!-- Summary Cards -->
@@ -14,7 +14,7 @@
             <div class="card text-white bg-primary mb-3 shadow">
                 <div class="card-body">
                     <h5 class="card-title">Employees</h5>
-                    <p class="card-text display-6">{{ dashboard_data.employees|length }}</p>
+                    <p class="card-text display-6">{{ employees|length }}</p>
                 </div>
             </div>
         </div>
@@ -22,7 +22,7 @@
             <div class="card text-white bg-success mb-3 shadow">
                 <div class="card-body">
                     <h5 class="card-title">Items</h5>
-                    <p class="card-text display-6">{{ dashboard_data.items|length }}</p>
+                    <p class="card-text display-6">{{ items|length }}</p>
                 </div>
             </div>
         </div>
@@ -30,15 +30,15 @@
             <div class="card text-white bg-warning mb-3 shadow">
                 <div class="card-body">
                     <h5 class="card-title">Expenses</h5>
-                    <p class="card-text display-6">{{ dashboard_data.expenses|length }}</p>
+                    <p class="card-text display-6">{{ expenses|length }}</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card text-white bg-info mb-3 shadow">
                 <div class="card-body">
-                    <h5 class="card-title">Materials</h5>
-                    <p class="card-text display-6">{{ dashboard_data.materials|length }}</p>
+                    <h5 class="card-title">Dashboard Rows</h5>
+                    <p class="card-text display-6">{{ dashboard|length }}</p>
                 </div>
             </div>
         </div>
@@ -49,20 +49,21 @@
     <table class="table table-striped table-bordered">
         <thead>
             <tr>
-                <th>ID</th><th>Name</th><th>Age</th><th>Address</th>
-                <th>Phone</th><th>Salary</th><th>Post</th>
+                {% if employees and employees.0 %}
+                    {% for col in employees.0 %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                {% else %}
+                    <th>No Employees</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
-            {% for emp in dashboard_data.employees %}
+            {% for emp in employees %}
             <tr>
-                <td>{{ emp.id }}</td>
-                <td>{{ emp.name }}</td>
-                <td>{{ emp.age }}</td>
-                <td>{{ emp.address }}</td>
-                <td>{{ emp.phone }}</td>
-                <td>{{ emp.salary }}</td>
-                <td>{{ emp.post }}</td>
+                {% for val in emp %}
+                    <td>{{ val }}</td>
+                {% endfor %}
             </tr>
             {% empty %}
             <tr><td colspan="7" class="text-center">No employees found.</td></tr>
@@ -75,19 +76,21 @@
     <table class="table table-striped table-bordered">
         <thead>
             <tr>
-                <th>ID</th><th>Buying Price</th><th>Selling Price</th>
-                <th>Total Quantity</th><th>Total Cost</th><th>Remain</th>
+                {% if items and items.0 %}
+                    {% for col in items.0 %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                {% else %}
+                    <th>No Items</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
-            {% for item in dashboard_data.items %}
+            {% for item in items %}
             <tr>
-                <td>{{ item.id }}</td>
-                <td>{{ item.buying_price }}</td>
-                <td>{{ item.selling_price }}</td>
-                <td>{{ item.total_quantity }}</td>
-                <td>{{ item.total_cost }}</td>
-                <td>{{ item.remain }}</td>
+                {% for val in item %}
+                    <td>{{ val }}</td>
+                {% endfor %}
             </tr>
             {% empty %}
             <tr><td colspan="6" class="text-center">No items found.</td></tr>
@@ -99,16 +102,22 @@
     <h4 class="mt-5">Expenses</h4>
     <table class="table table-striped table-bordered">
         <thead>
-            <tr><th>ID</th><th>Date</th><th>Type</th><th>Item</th><th>Total</th></tr>
+            <tr>
+                {% if expenses and expenses.0 %}
+                    {% for col in expenses.0 %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                {% else %}
+                    <th>No Expenses</th>
+                {% endif %}
+            </tr>
         </thead>
         <tbody>
-            {% for exp in dashboard_data.expenses %}
+            {% for exp in expenses %}
             <tr>
-                <td>{{ exp.id }}</td>
-                <td>{{ exp.date }}</td>
-                <td>{{ exp.type }}</td>
-                <td>{{ exp.item_id }}</td>
-                <td>{{ exp.total }}</td>
+                {% for val in exp %}
+                    <td>{{ val }}</td>
+                {% endfor %}
             </tr>
             {% empty %}
             <tr><td colspan="5" class="text-center">No expenses found.</td></tr>
@@ -116,57 +125,29 @@
         </tbody>
     </table>
 
-    <!-- Materials Table -->
-    <h4 class="mt-5">Materials Expenses</h4>
+    <!-- Dashboard summary -->
+    <h4 class="mt-5">Dashboard Raw Data</h4>
     <table class="table table-striped table-bordered">
         <thead>
-            <tr><th>Type</th><th>Date</th><th>Cost</th><th>Item</th></tr>
+            <tr>
+                {% if dashboard and dashboard.0 %}
+                    {% for col in dashboard.0 %}
+                        <th>{{ col }}</th>
+                    {% endfor %}
+                {% else %}
+                    <th>No Dashboard Data</th>
+                {% endif %}
+            </tr>
         </thead>
         <tbody>
-            {% for mat in dashboard_data.materials %}
+            {% for d in dashboard %}
             <tr>
-                <td>{{ mat.type }}</td>
-                <td>{{ mat.date }}</td>
-                <td>{{ mat.cost }}</td>
-                <td>{{ mat.item_id }}</td>
+                {% for val in d %}
+                    <td>{{ val }}</td>
+                {% endfor %}
             </tr>
             {% empty %}
-            <tr><td colspan="4" class="text-center">No materials expenses found.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- Operations Table -->
-    <h4 class="mt-5">Operational Expenses</h4>
-    <table class="table table-striped table-bordered">
-        <thead>
-            <tr><th>Type</th><th>Date</th><th>Cost</th></tr>
-        </thead>
-        <tbody>
-            {% for op in dashboard_data.operations %}
-            <tr>
-                <td>{{ op.type }}</td>
-                <td>{{ op.date }}</td>
-                <td>{{ op.cost }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3" class="text-center">No operational expenses found.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- Stock Dashboard -->
-    <h4 class="mt-5">Stock Dashboard</h4>
-    <table class="table table-striped table-bordered">
-        <thead><tr><th>Item</th><th>Remaining</th></tr></thead>
-        <tbody>
-            {% for d in dashboard_data.stock %}
-            <tr>
-                <td>{{ d.item_id }}</td>
-                <td>{{ d.remaining }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="2" class="text-center">No stock data available.</td></tr>
+            <tr><td colspan="2" class="text-center">No dashboard data available.</td></tr>
             {% endfor %}
         </tbody>
     </table>
