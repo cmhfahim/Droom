@@ -4,14 +4,9 @@ from django.contrib import messages
 from django.db import connection
 from django.contrib.auth.decorators import login_required
 
-from .forms import CompanyRegistrationForm
-from .services import (
-    register_company_tables,
-    create_custom_table,
-    drop_custom_table
-)
-from .models import CompanyData
-
+from .forms import CompanyRegistrationForm, CompanyLoginForm
+from .services import register_company_tables, create_custom_table, drop_custom_table
+from .models import CompanyData, CompanyLogin
 
 # ---------------------------
 # Company Registration
@@ -35,14 +30,38 @@ def register_company_view(request):
 
 
 # ---------------------------
+# Company Login
+# ---------------------------
+def company_login(request):
+    """
+    Login view for companies using company_id and password.
+    """
+    if request.method == "POST":
+        form = CompanyLoginForm(request.POST)
+        if form.is_valid():
+            company_id = form.cleaned_data["company_id"]
+            password = form.cleaned_data["password"]
+
+            try:
+                login_record = CompanyLogin.objects.get(company__company_id=company_id, password=password)
+                request.user.company_id = company_id  # Set company_id in session-like user attribute
+                messages.success(request, "Login successful!")
+                return redirect("dashboard")
+            except CompanyLogin.DoesNotExist:
+                messages.error(request, "Invalid company ID or password.")
+    else:
+        form = CompanyLoginForm()
+    return render(request, "core/company_login.html", {"form": form})
+
+
+# ---------------------------
 # Dashboard
 # ---------------------------
 @login_required
 def dashboard(request, company_id=None):
     """
     Shows company dashboard: employees, expenses, items, summary dashboard.
-    Supports both request.user.company_id (if logged in)
-    or company_id from URL.
+    Supports both request.user.company_id (if logged in) or company_id from URL.
     """
     if company_id is None:
         company_id = getattr(request.user, "company_id", None)
