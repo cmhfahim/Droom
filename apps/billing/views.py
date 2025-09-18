@@ -1,34 +1,28 @@
-in my file i have billing file i am sharing its all code tell me if i need to do anything
-
-billing/models.py
-from django.db import models
-from apps.core.models import CompanyData
-
-class BillingHistory(models.Model):
-    company = models.ForeignKey(CompanyData, on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
-    amount = models.FloatField()
-    method = models.CharField(max_length=50)
-
-billing/urls.py
-
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('', views.billing_dashboard, name='billing_dashboard'),
-]
-
-billing/views.py
-
-from django.shortcuts import render
-from apps.billing.models import BillingHistory
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from apps.billing.models import BillingHistory
+from apps.core.models import CompanyData
 
 @login_required
 def billing_dashboard(request):
-    company = request.user.company
-    bills = BillingHistory.objects.filter(company=company)
-    return render(request, 'billing/billing_dashboard.html', {'bills': bills})
+    """
+    Display billing history for the company associated with the logged-in user.
+    """
+    # Get company ID from user
+    company_id = getattr(request.user, "company_id", None)
+    
+    if not company_id:
+        messages.error(request, "Company not identified. Please log in again.")
+        return redirect("users:login")  # Redirect to login page
 
-its all my code
+    try:
+        company = CompanyData.objects.get(pk=company_id)
+    except CompanyData.DoesNotExist:
+        messages.error(request, "Company does not exist.")
+        return redirect("users:login")
+    
+    # Fetch billing history for this company
+    bills = BillingHistory.objects.filter(company=company).order_by('-date')
+
+    return render(request, 'billing/billing_dashboard.html', {'bills': bills, 'company': company})
